@@ -1,13 +1,11 @@
 # define minimum version of cmake
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.12...4.1)
 
 # define project name and its language
 project(eMELA CXX Fortran)
 
 # define c++ standard
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}  -fPIC -Wunused")
 set(CMAKE_SHARED_LINKER_FLAGS -w)
@@ -66,9 +64,9 @@ if(WITH_LHAPDF)
      )
      set(LHAPDF_LIBRARIES ${LHAPDF_LIBRARIES} CACHE STRING INTERNAL)
   endif(LHAPDF_CONFIG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wpedantic -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} -Wall -Wextra -Wpedantic -fPIC")
 else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wpedantic -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -fPIC")
 endif()
 
 option(SHARED "Build shared-libray instead of static-libray" ON)
@@ -77,6 +75,9 @@ if(SHARED)
 else()
   add_library(eMELA STATIC ${source_files})
 endif()
+
+# ensure the compiler is invoked in a mode of at-least C++ 11
+target_compile_features(eMELA PUBLIC cxx_std_11)
 
 if(WITH_LHAPDF)
   target_include_directories(eMELA PUBLIC ${Boost_INCLUDE_DIRS})
